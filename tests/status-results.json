@@ -1,0 +1,6 @@
+{
+  "success": "Process ended: OK read=3 valid=3 invalid=0 duplicates=0 unique=3 records=10",
+  "failure": "Process ended: Failed read=0 valid=0 invalid=0 duplicates=0 unique=0 records=0",
+  "stopped": "Process ended: Stopped read=1960 valid=1959 invalid=0 duplicates=0 unique=0 records=0",
+  "existing_bin_preserved": true
+}

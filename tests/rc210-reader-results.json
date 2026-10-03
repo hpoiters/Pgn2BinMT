@@ -1,0 +1,182 @@
+[
+  {
+    "case": "plain",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "plain",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "plain",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "bom-crlf",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "bom-crlf",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "bom-crlf",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "comment",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "comment",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "comment",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "line-comment",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "line-comment",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "line-comment",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "recovery-nested",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "recovery-nested",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "recovery-nested",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "recovery-long-tag",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "recovery-long-tag",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "recovery-long-tag",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "recovery-long-token",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "recovery-long-token",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "recovery-long-token",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "recovery-eof",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "recovery-eof",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "recovery-eof",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "no-newline",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "no-newline",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "no-newline",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "empty",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "empty",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "empty",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "invalid-bom",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "invalid-bom",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "invalid-bom",
+    "prefix_bytes": 262140,
+    "passed": true
+  },
+  {
+    "case": "variations",
+    "prefix_bytes": 0,
+    "passed": true
+  },
+  {
+    "case": "variations",
+    "prefix_bytes": 262143,
+    "passed": true
+  },
+  {
+    "case": "variations",
+    "prefix_bytes": 262140,
+    "passed": true
+  }
+]

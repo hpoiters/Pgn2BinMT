@@ -1,0 +1,450 @@
+--- RC2.8/src/core.cpp
++++ RC2.9/src/core.cpp
+@@ -342,10 +342,24 @@
+   }
+   return out;
+ }
++// Thread-owned counters: no contended atomic updates for diagnostics.
++struct alignas(64) WorkMetrics {
++  double processSeconds = 0, sortSeconds = 0, writeSeconds = 0,
++         queueSeconds = 0;
++  uint64_t files = 0, bytes = 0, mergeGroups = 0;
++};
++struct Measure {
++  double &value;
++  Clock::time_point start = Clock::now();
++  ~Measure() {
++    value += std::chrono::duration<double>(Clock::now() - start).count();
++  }
++};
++using GameBatch = std::vector<Game>;
+ class Queue {
+-  std::deque<Game> q;
++  std::deque<GameBatch> q;
+   std::mutex m;
+-  std::condition_variable cv;
++  std::condition_variable notEmpty, notFull;
+   size_t max;
+   bool done = false;
+ 
+@@ -354,25 +368,29 @@
+   void close() {
+     std::lock_guard<std::mutex> l(m);
+     done = true;
+-    cv.notify_all();
+-  }
+-  void put(Game g, Progress &p) {
++    notEmpty.notify_all();
++    notFull.notify_all();
++  }
++  void put(GameBatch g, Progress &p) {
+     std::unique_lock<std::mutex> l(m);
+     while (q.size() >= max && !p.stop)
+-      cv.wait_for(l, std::chrono::milliseconds(100));
++      notFull.wait_for(l, std::chrono::milliseconds(100));
+     check(p);
+     q.push_back(std::move(g));
+-    cv.notify_all();
+-  }
+-  bool take(Game &g, Progress &p) {
++    l.unlock();
++    notEmpty.notify_one();
++  }
++  bool take(GameBatch &g, Progress &p, WorkMetrics &metrics) {
++    Measure timing{metrics.queueSeconds};
+     std::unique_lock<std::mutex> l(m);
+     while (q.empty() && !done && !p.stop)
+-      cv.wait_for(l, std::chrono::milliseconds(100));
++      notEmpty.wait_for(l, std::chrono::milliseconds(100));
+     if (p.stop || q.empty())
+       return false;
+     g = std::move(q.front());
+     q.pop_front();
+-    cv.notify_all();
++    l.unlock();
++    notFull.notify_one();
+     return true;
+   }
+ };
+@@ -389,9 +407,14 @@
+   });
+   check(p);
+ }
+-void writeRun(const fs::path &path, std::vector<Event> &v, Progress &p) {
++void writeRun(const fs::path &path, std::vector<Event> &v, Progress &p,
++              WorkMetrics &metrics) {
+   check(p);
+-  cancellableSort(v, lessEvent, p);
++  {
++    Measure timing{metrics.sortSeconds};
++    cancellableSort(v, lessEvent, p);
++  }
++  Measure timing{metrics.writeSeconds};
+   check(p);
+   std::ofstream f(path, std::ios::binary);
+   constexpr size_t chunkEvents = 1048576 / sizeof(Event);
+@@ -407,6 +430,8 @@
+   f.close();
+   if (!f)
+     throw std::runtime_error("Temporary disk full / write error");
++  ++metrics.files;
++  metrics.bytes += v.size() * sizeof(Event);
+   v.clear();
+ }
+ class Merge {
+@@ -644,6 +669,11 @@
+         std::max<size_t>(4096, mem * 1048576 / cfg.threads / sizeof(Event));
+     queue = std::make_unique<Queue>(std::max<size_t>(2, cfg.threads));
+     std::mutex rm, em;
++    std::vector<WorkMetrics> workerMetrics(cfg.threads);
++    std::vector<WorkMetrics> reducerMetrics(
++        std::min<unsigned>(cfg.threads, 32));
++    double readerSeconds = 0, readerQueueSeconds = 0;
++    WorkMetrics finalMetrics;
+     // Bound concurrent merge streams below the Windows CRT file limit.
+     unsigned dedupThreads = std::min<unsigned>(cfg.threads, 32);
+     size_t gameFanIn = std::min<size_t>(32, 384 / dedupThreads);
+@@ -681,6 +711,7 @@
+     } guard{p, *queue, reader, workers};
+     for (unsigned w = 0; w < cfg.threads; ++w)
+       workers.emplace_back([&, w] {
++        auto &metrics = workerMetrics[w];
+         ++p.active;
+         try {
+           std::vector<Event> v;
+@@ -696,7 +727,7 @@
+               return;
+             auto path = work / ("w" + std::to_string(w) + "-" +
+                                 std::to_string(batch++) + ".run");
+-            writeRun(path, v, p);
++            writeRun(path, v, p, metrics);
+             std::lock_guard<std::mutex> l(rm);
+             runs.push_back(path);
+           };
+@@ -704,13 +735,17 @@
+             if (games.empty())
+               return;
+             check(p);
+-            cancellableSort(
+-                games,
+-                [](const auto &a, const auto &b) {
+-                  return a.bucket != b.bucket ? a.bucket < b.bucket
+-                                              : lessGame(a, b);
+-                },
+-                p);
++            {
++              Measure timing{metrics.sortSeconds};
++              cancellableSort(
++                  games,
++                  [](const auto &a, const auto &b) {
++                    return a.bucket != b.bucket ? a.bucket < b.bucket
++                                                : lessGame(a, b);
++                  },
++                  p);
++            }
++            Measure timing{metrics.writeSeconds};
+             auto batchId = batch++;
+             for (size_t begin = 0; begin < games.size();) {
+               check(p);
+@@ -729,6 +764,8 @@
+               file.close();
+               if (!file)
+                 throw std::runtime_error("Deduplication: write error");
++              ++metrics.files;
++              metrics.bytes += fs::file_size(path);
+               {
+                 std::lock_guard<std::mutex> lock(rm);
+                 gameRuns[bucket].push_back(path);
+@@ -739,41 +776,44 @@
+             games.clear();
+             gameMemory = 0;
+           };
+-          Game g;
+-          while (queue->take(g, p)) {
+-            std::vector<Event> events;
+-            std::string canonical;
+-            try {
+-              events =
+-                  process(g, cfg, p, cfg.deduplicate ? &canonical : nullptr);
+-            } catch (const std::exception &e) {
+-              if (p.stop)
+-                throw;
+-              ++p.invalid;
+-              std::lock_guard<std::mutex> l(em);
+-              errors << "Game " << g.id << ": " << e.what() << "\n";
+-              if (!errors)
+-                throw std::runtime_error("Error report write failure");
+-              continue;
+-            }
+-            ++p.valid;
+-            p.events += events.size();
+-            if (cfg.deduplicate) {
+-              BookGame item{g.id, std::move(canonical), std::move(events)};
+-              item.bucket = partitionHash(item.canonical) % dedupThreads;
+-              if (!games.empty() && gameMemory + item.memory() > gameBudget)
+-                flushGames();
+-              gameMemory += item.memory();
+-              games.push_back(std::move(item));
+-              if (gameMemory >= gameBudget)
+-                flushGames();
+-              continue;
+-            }
+-            ++p.uniqueGames;
+-            for (auto &e : events) {
+-              v.push_back(e);
+-              if (v.size() >= cap)
+-                flush();
++          GameBatch batchGames;
++          while (queue->take(batchGames, p, metrics)) {
++            for (const Game &g : batchGames) {
++              std::vector<Event> events;
++              std::string canonical;
++              try {
++                Measure timing{metrics.processSeconds};
++                events =
++                    process(g, cfg, p, cfg.deduplicate ? &canonical : nullptr);
++              } catch (const std::exception &e) {
++                if (p.stop)
++                  throw;
++                ++p.invalid;
++                std::lock_guard<std::mutex> l(em);
++                errors << "Game " << g.id << ": " << e.what() << "\n";
++                if (!errors)
++                  throw std::runtime_error("Error report write failure");
++                continue;
++              }
++              ++p.valid;
++              p.events += events.size();
++              if (cfg.deduplicate) {
++                BookGame item{g.id, std::move(canonical), std::move(events)};
++                item.bucket = partitionHash(item.canonical) % dedupThreads;
++                if (!games.empty() && gameMemory + item.memory() > gameBudget)
++                  flushGames();
++                gameMemory += item.memory();
++                games.push_back(std::move(item));
++                if (gameMemory >= gameBudget)
++                  flushGames();
++                continue;
++              }
++              ++p.uniqueGames;
++              for (auto &e : events) {
++                v.push_back(e);
++                if (v.size() >= cap)
++                  flush();
++              }
+             }
+           }
+           if (!p.stop) {
+@@ -787,8 +827,21 @@
+         --p.active;
+       });
+     reader = std::thread([&] {
++      Measure readerTiming{readerSeconds};
+       try {
+         uint64_t id = 0;
++        GameBatch pending;
++        size_t pendingBytes = 0;
++        auto dispatch = [&] {
++          if (pending.empty())
++            return;
++          {
++            Measure timing{readerQueueSeconds};
++            queue->put(std::move(pending), p);
++          }
++          pending = GameBatch{};
++          pendingBytes = 0;
++        };
+         for (auto &path : cfg.inputs) {
+           check(p);
+           std::ifstream f(path, std::ios::binary);
+@@ -806,7 +859,20 @@
+               g.error = "Unterminated variation";
+             g.id = ++id;
+             ++p.read;
+-            queue->put(std::move(g), p);
++            // Bound batching by both game count and estimated payload. A single
++            // large game travels alone, under the existing reader size limit.
++            size_t bytes = sizeof(Game) + g.error.size() +
++                           g.moves.size() * sizeof(std::string);
++            for (const auto &move : g.moves)
++              bytes += move.size();
++            for (const auto &tag : g.tags)
++              bytes += 96 + tag.first.size() + tag.second.size();
++            if (!pending.empty() && pendingBytes + bytes > 65536)
++              dispatch();
++            pendingBytes += bytes;
++            pending.push_back(std::move(g));
++            if (pending.size() == 16 || pendingBytes >= 65536)
++              dispatch();
+             g = Game{};
+             depth = 0;
+             gameBytes = 0;
+@@ -898,6 +964,7 @@
+                                      path.u8string() + ": " + e.what());
+           }
+         }
++        dispatch();
+         queue->close();
+       } catch (const std::exception &e) {
+         if (!p.stop)
+@@ -916,6 +983,7 @@
+     p.readMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
+                              Clock::now() - start)
+                              .count();
++    const auto processingEnd = Clock::now();
+     if (cfg.deduplicate) {
+       auto dedupStart = Clock::now();
+       uint64_t workUnits = 0;
+@@ -957,6 +1025,7 @@
+             unsigned bucket = nextBucket++;
+             if (bucket >= dedupThreads)
+               break;
++            auto &metrics = reducerMetrics[bucket];
+             auto &paths = gameRuns[bucket];
+             if (paths.empty())
+               continue;
+@@ -972,6 +1041,8 @@
+                                     std::to_string(gamePass) + "-" +
+                                     std::to_string(i) + ".run");
+                 {
++                  ++metrics.mergeGroups;
++                  Measure timing{metrics.writeSeconds};
+                   GameMerge merge(group);
+                   std::ofstream file(dest, std::ios::binary);
+                   BookGame game;
+@@ -985,6 +1056,8 @@
+                     throw std::runtime_error(
+                         "Deduplication: merge write error");
+                 }
++                ++metrics.files;
++                metrics.bytes += fs::file_size(dest);
+                 for (const auto &path : group)
+                   fs::remove(path);
+                 next.push_back(dest);
+@@ -1007,7 +1080,7 @@
+                   return;
+                 auto path = work / ("unique-b" + std::to_string(bucket) + "-" +
+                                     std::to_string(batch++) + ".run");
+-                writeRun(path, events, p);
++                writeRun(path, events, p, metrics);
+                 std::lock_guard<std::mutex> lock(rm);
+                 runs.push_back(path);
+               };
+@@ -1053,6 +1126,7 @@
+                                                                 dedupStart)
+               .count();
+     }
++    const auto dedupEnd = Clock::now();
+     uint64_t retainedEvents = 0;
+     for (const auto &path : runs)
+       retainedEvents += fs::file_size(path) / sizeof(Event);
+@@ -1070,6 +1144,7 @@
+         auto dest = work / ("merge" + std::to_string(pass) + "-" +
+                             std::to_string(i) + ".run");
+         {
++          ++finalMetrics.mergeGroups;
+           Merge merge(group);
+           std::ofstream f(dest, std::ios::binary);
+           Event e;
+@@ -1082,6 +1157,8 @@
+           if (!f)
+             throw std::runtime_error("Merge: disk full");
+         }
++        ++finalMetrics.files;
++        finalMetrics.bytes += fs::file_size(dest);
+         for (auto &path : group)
+           fs::remove(path);
+         next.push_back(dest);
+@@ -1089,6 +1166,7 @@
+       runs = std::move(next);
+       ++pass;
+     }
++    const auto mergeEnd = Clock::now();
+     p.set("Filtering / writing BIN", retainedEvents);
+     auto temp = work / "Book.part";
+     std::ofstream bin(temp, std::ios::binary);
+@@ -1148,6 +1226,7 @@
+     bin.close();
+     if (!bin)
+       throw std::runtime_error("BIN write error / disk full");
++    const auto binEnd = Clock::now();
+     p.set("Validating BIN", p.records);
+     {
+       std::ifstream f(temp, std::ios::binary);
+@@ -1166,13 +1245,14 @@
+       if (n != p.records || fs::file_size(temp) != n * 16)
+         throw std::runtime_error("BIN size mismatch");
+     }
++    const auto validationEnd = Clock::now();
+     p.set("Writing reports / finalizing", 3);
+     double seconds =
+         std::chrono::duration<double>(Clock::now() - start).count();
+     auto report = work / "report.txt";
+     std::ofstream r(report);
+     auto timestamp = std::time(nullptr);
+-    r << "Pgn2BinMT RC2.8\nDate/time: "
++    r << "Pgn2BinMT RC2.9\nDate/time: "
+       << std::put_time(std::localtime(&timestamp), "%Y-%m-%d %H:%M:%S") << "\n";
+     for (auto &i : cfg.inputs)
+       r << "Source: " << i.u8string() << "\n";
+@@ -1198,6 +1278,50 @@
+       << "\nMainline only. Deduplication compares the starting position and "
+          "complete "
+          "mainline exactly; the first valid source copy contributes.\n";
++    auto duration = [](auto a, auto b) {
++      return std::chrono::duration<double>(b - a).count();
++    };
++    r << std::fixed << std::setprecision(6)
++      << "\nDiagnostics: wall phases are sequential; worker sums overlap and "
++         "must not be added to wall time.\n"
++      << "Processing phase seconds: " << duration(start, processingEnd)
++      << "\nDeduplication phase wall seconds: "
++      << duration(processingEnd, dedupEnd)
++      << "\nEvent merge phase seconds: " << duration(dedupEnd, mergeEnd)
++      << "\nBIN writing phase seconds: " << duration(mergeEnd, binEnd)
++      << "\nBIN validation phase seconds: " << duration(binEnd, validationEnd)
++      << "\nReader seconds (overlaps workers): " << readerSeconds
++      << "\nReader queue seconds (included in reader): " << readerQueueSeconds
++      << "\nQueue batch limit games: 16\nQueue batch target bytes: 65536\n";
++    auto summarize = [&](const char *label, const auto &all) {
++      WorkMetrics total;
++      for (const auto &m : all) {
++        total.processSeconds += m.processSeconds;
++        total.sortSeconds += m.sortSeconds;
++        total.writeSeconds += m.writeSeconds;
++        total.queueSeconds += m.queueSeconds;
++        total.files += m.files;
++        total.bytes += m.bytes;
++        total.mergeGroups += m.mergeGroups;
++      }
++      r << label << " process seconds sum: " << total.processSeconds << "\n"
++        << label << " sort seconds sum: " << total.sortSeconds << "\n"
++        << label << " temporary write/merge seconds sum: " << total.writeSeconds
++        << "\n"
++        << label << " queue wait/handoff seconds sum: " << total.queueSeconds
++        << "\n"
++        << label << " temporary files written: " << total.files << "\n"
++        << label << " temporary bytes written: " << total.bytes << "\n"
++        << label << " intermediate merge groups: " << total.mergeGroups << "\n";
++    };
++    summarize("PGN workers", workerMetrics);
++    summarize("Dedup reducers", reducerMetrics);
++    r << "Event intermediate merge groups: " << finalMetrics.mergeGroups
++      << "\nEvent intermediate files written: " << finalMetrics.files
++      << "\nEvent intermediate bytes written: " << finalMetrics.bytes
++      << "\nEvent intermediate merge passes: " << pass
++      << "\nTiming scope: Seconds excludes report copying, final rename and "
++         "cleanup.\n";
+     r.close();
+     if (!r)
+       throw std::runtime_error("Report write error");
+@@ -1246,6 +1370,9 @@
+              << "\nValid processed: " << p.valid
+              << "\nRejected processed: " << p.invalid
+              << "\nNot yet processed: " << (p.read - p.valid - p.invalid)
++             << "\nThreads: " << cfg.threads
++             << "\nElapsed seconds before cleanup: "
++             << std::chrono::duration<double>(Clock::now() - start).count()
+              << "\nNo new final BIN was placed.\n";
+     }
+     {

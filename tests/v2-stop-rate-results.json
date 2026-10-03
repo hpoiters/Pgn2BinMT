@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "platform": "Linux native shared core",
+  "reading_stop_frozen_ms": 106,
+  "dedup_stop_preserved_ms": 749,
+  "previous_output_and_cleanup_checks_passed": true,
+  "dated_folder_checks_passed": true
+}

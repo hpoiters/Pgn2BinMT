@@ -1,0 +1,5 @@
+{
+  "passed": true,
+  "stdout": "Phase counters valid; intermediate dedup progress observed; final progress 100%",
+  "temporary_files_removed": true
+}

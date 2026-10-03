@@ -1,0 +1,14 @@
+[Event "Reference"]
+[Result "1-0"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 1-0
+
+[Event "Reference"]
+[Result "1/2-1/2"]
+
+1. e4 {comment} e5 2. Nf3 $1 (2. Bc4 Nf6) Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. d3 1/2-1/2
+
+[Event "Reference"]
+[Result "0-1"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Nc3 0-1

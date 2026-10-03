@@ -1,0 +1,155 @@
+[
+  {
+    "name": "earliest-result-threads-1",
+    "passed": true,
+    "threads": 1,
+    "duplicates": 2,
+    "seconds": 0.0042,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=2 unique=1 records=2",
+    "sha256": "d69b4b3f3df6a4414601fcf9eee932c1e375cc2b7c09758bcaf45cab30471a90"
+  },
+  {
+    "name": "earliest-result-threads-2",
+    "passed": true,
+    "threads": 2,
+    "duplicates": 2,
+    "seconds": 0.0036,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=2 unique=1 records=2",
+    "sha256": "d69b4b3f3df6a4414601fcf9eee932c1e375cc2b7c09758bcaf45cab30471a90"
+  },
+  {
+    "name": "earliest-result-threads-6",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 2,
+    "seconds": 0.0033,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=2 unique=1 records=2",
+    "sha256": "d69b4b3f3df6a4414601fcf9eee932c1e375cc2b7c09758bcaf45cab30471a90"
+  },
+  {
+    "name": "earliest-result-threads-18",
+    "passed": true,
+    "threads": 18,
+    "duplicates": 2,
+    "seconds": 0.006,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=2 unique=1 records=2",
+    "sha256": "d69b4b3f3df6a4414601fcf9eee932c1e375cc2b7c09758bcaf45cab30471a90"
+  },
+  {
+    "name": "duplicates-do-not-reach-minimum",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 2,
+    "seconds": 0.0034,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=2 unique=1 records=0",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "disabled-keeps-old-weights",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 0,
+    "seconds": 0.0044,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=0 unique=3 records=2",
+    "sha256": "28bf2469caf2ed364ce4f80fbd50d4fc9468d3db90ed4b655c12b67451de9a9a"
+  },
+  {
+    "name": "across-files-first-valid-copy",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 2,
+    "seconds": 0.003,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=2 unique=1 records=2",
+    "sha256": "d69b4b3f3df6a4414601fcf9eee932c1e375cc2b7c09758bcaf45cab30471a90"
+  },
+  {
+    "name": "invalid-first-copy-is-discarded",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 1,
+    "seconds": 0.0034,
+    "stdout": "Process ended: OK read=3 valid=2 invalid=1 duplicates=1 unique=1 records=2",
+    "sha256": "d69b4b3f3df6a4414601fcf9eee932c1e375cc2b7c09758bcaf45cab30471a90"
+  },
+  {
+    "name": "different-beyond-book-depth",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 1,
+    "seconds": 0.0037,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=1 unique=2 records=1",
+    "sha256": "000a40f5447dbad28070ec5fcf56742f7ccbfb71c82e6a080dd60bde28ee2371"
+  },
+  {
+    "name": "partial-game-is-distinct",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 0,
+    "seconds": 0.0032,
+    "stdout": "Process ended: OK read=2 valid=2 invalid=0 duplicates=0 unique=2 records=5",
+    "sha256": "b5020479e990898960dc6e1226ae06274064bc3f6bc5e1f5ab7765b416853bfd"
+  },
+  {
+    "name": "normal-start-equals-FEN-ignore-clocks",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 1,
+    "seconds": 0.0034,
+    "stdout": "Process ended: OK read=2 valid=2 invalid=0 duplicates=1 unique=1 records=2",
+    "sha256": "d69b4b3f3df6a4414601fcf9eee932c1e375cc2b7c09758bcaf45cab30471a90"
+  },
+  {
+    "name": "castling-spellings",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 1,
+    "seconds": 0.0029,
+    "stdout": "Process ended: OK read=2 valid=2 invalid=0 duplicates=1 unique=1 records=2",
+    "sha256": "d640609e30e0dc70b46b4b4b1e6fa8c7eaa00dee1f0a48f0f60bdb971262a345"
+  },
+  {
+    "name": "different-starts",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 1,
+    "seconds": 0.0029,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=1 unique=2 records=2",
+    "sha256": "33a7f489a4fe2d33569ad38f6beaad59bb2ddff443c3e1abe1767bf85b074c27"
+  },
+  {
+    "name": "demo-default-three-unique",
+    "passed": true,
+    "threads": 6,
+    "duplicates": 0,
+    "seconds": 0.0047,
+    "stdout": "Process ended: OK read=3 valid=3 invalid=0 duplicates=0 unique=3 records=10",
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354"
+  },
+  {
+    "name": "external-merges-halving-1",
+    "passed": true,
+    "threads": 1,
+    "duplicates": 25000,
+    "seconds": 6.9389,
+    "stdout": "Process ended: OK read=50000 valid=50000 invalid=0 duplicates=25000 unique=25000 records=1",
+    "sha256": "f1dfe2607b945f43b922f30a06873398d601f3a8f1f373beeba0e485cb84b760"
+  },
+  {
+    "name": "external-merges-halving-18",
+    "passed": true,
+    "threads": 18,
+    "duplicates": 25000,
+    "seconds": 6.4942,
+    "stdout": "Process ended: OK read=50000 valid=50000 invalid=0 duplicates=25000 unique=25000 records=1",
+    "sha256": "f1dfe2607b945f43b922f30a06873398d601f3a8f1f373beeba0e485cb84b760"
+  },
+  {
+    "name": "300000-games-bounded-dedup",
+    "passed": true,
+    "threads": 18,
+    "duplicates": 299997,
+    "seconds": 1.7383,
+    "stdout": "Process ended: OK read=300000 valid=300000 invalid=0 duplicates=299997 unique=3 records=10",
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354"
+  }
+]

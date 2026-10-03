@@ -1,0 +1,5 @@
+[
+  "Existing BIN preserved without overwrite authorization",
+  "Controlled stop preserves existing BIN and removes temporary files",
+  "Missing option value handled"
+]

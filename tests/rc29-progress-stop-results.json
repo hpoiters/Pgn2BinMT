@@ -1,0 +1,26 @@
+[
+  {
+    "name": "test_sort_stop",
+    "passed": true,
+    "elapsed": 0.04495445099973949,
+    "stdout": "Sort order unchanged; cancellation detected within 4096 comparisons"
+  },
+  {
+    "name": "test_phase_progress",
+    "passed": true,
+    "elapsed": 0.4079843020003864,
+    "stdout": "Phase counters valid; intermediate dedup progress observed; final progress 100%"
+  },
+  {
+    "name": "test_parallel_progress",
+    "passed": true,
+    "elapsed": 0.9006218600002285,
+    "stdout": "Peak parallel reducers: 18; counters valid; accounting complete"
+  },
+  {
+    "name": "test_stop_dedup",
+    "passed": true,
+    "elapsed": 0.40140374700013126,
+    "stdout": "Stopped during deduplication"
+  }
+]

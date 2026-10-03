@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "distinct_run_folders": 3,
+  "earlier_files_preserved": true,
+  "base_bin_preserved_by_run_folder_mode": true,
+  "nonempty_and_empty_reports_overwritten": true,
+  "bin_bytes": 160
+}

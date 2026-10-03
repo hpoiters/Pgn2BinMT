@@ -1,0 +1,242 @@
+[
+  {
+    "name": "threads-1",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0113,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=3 valid=3 invalid=0 records=10"
+  },
+  {
+    "name": "threads-2",
+    "passed": true,
+    "threads": 2,
+    "seconds": 0.0036,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=3 valid=3 invalid=0 records=10"
+  },
+  {
+    "name": "threads-6",
+    "passed": true,
+    "threads": 6,
+    "seconds": 0.0063,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=3 valid=3 invalid=0 records=10"
+  },
+  {
+    "name": "threads-18",
+    "passed": true,
+    "threads": 18,
+    "seconds": 0.0079,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=3 valid=3 invalid=0 records=10"
+  },
+  {
+    "name": "special-moves-FEN",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.008,
+    "sha256": "b98014723fa0e5d4463455ff299f8f783ebf640a680a3d1e538fdc2f56e74370",
+    "stdout": "Gereed read=6 valid=6 invalid=0 records=7"
+  },
+  {
+    "name": "transpositions",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.004,
+    "sha256": "f42349ff4db003cd295692e2abcc8bc498ef5c65fb7df98cb61ddbfee86263aa",
+    "stdout": "Gereed read=2 valid=2 invalid=0 records=2"
+  },
+  {
+    "name": "minimum-2",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0035,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "Gereed read=2 valid=2 invalid=0 records=0"
+  },
+  {
+    "name": "minimum-3",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0033,
+    "sha256": "3377a2af7fafed355ca9e6b46cd577c1648708e91c950d08c8177009b8678788",
+    "stdout": "Gereed read=3 valid=3 invalid=0 records=2"
+  },
+  {
+    "name": "BOM-NAG-RAV-semicolon",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.005,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=3 valid=3 invalid=0 records=10"
+  },
+  {
+    "name": "invalid-empty-no-partial-events",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.004,
+    "sha256": "28093fc6aad6964b489b295155846443150b99ba9246c724e76f7f0c3b2e873b",
+    "stdout": "Gereed read=3 valid=1 invalid=2 records=2"
+  },
+  {
+    "name": "invalid-after-depth",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0035,
+    "sha256": "33b169e05b29a37e9aff96d7f6a3fc44403a86268ac6176e3e89accbc0add54d",
+    "stdout": "Gereed read=2 valid=1 invalid=1 records=1"
+  },
+  {
+    "name": "unterminated-comment",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0034,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "Gereed read=1 valid=0 invalid=1 records=0"
+  },
+  {
+    "name": "unterminated-comment-recovery",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0038,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=4 valid=3 invalid=1 records=10"
+  },
+  {
+    "name": "halving-original-order-1",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.3513,
+    "sha256": "10b9babc63676c48d6843be02fb6d2fb9eae4d108aee2f4303c6d87a6d1d0ea8",
+    "stdout": "Gereed read=28000 valid=28000 invalid=0 records=4"
+  },
+  {
+    "name": "halving-original-order-2",
+    "passed": true,
+    "threads": 2,
+    "seconds": 0.7239,
+    "sha256": "10b9babc63676c48d6843be02fb6d2fb9eae4d108aee2f4303c6d87a6d1d0ea8",
+    "stdout": "Gereed read=28000 valid=28000 invalid=0 records=4"
+  },
+  {
+    "name": "halving-original-order-18",
+    "passed": true,
+    "threads": 18,
+    "seconds": 1.4886,
+    "sha256": "10b9babc63676c48d6843be02fb6d2fb9eae4d108aee2f4303c6d87a6d1d0ea8",
+    "stdout": "Gereed read=28000 valid=28000 invalid=0 records=4"
+  },
+  {
+    "name": "repetition-distinct-game-minimum",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0038,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "Gereed read=1 valid=1 invalid=0 records=0"
+  },
+  {
+    "name": "depth-random-1",
+    "passed": true,
+    "threads": 6,
+    "seconds": 0.0138,
+    "sha256": "6c8d8a92e5ff310062efc09afbfe82a32889ab7ce085df654f9bcdab3a62b71d",
+    "stdout": "Gereed read=120 valid=120 invalid=0 records=19"
+  },
+  {
+    "name": "depth-random-59",
+    "passed": true,
+    "threads": 6,
+    "seconds": 0.0229,
+    "sha256": "6e1f10741f43c070733fb382c41cdd9f6e8139343031f33f69245db905c2b419",
+    "stdout": "Gereed read=120 valid=120 invalid=0 records=4547"
+  },
+  {
+    "name": "depth-random-60",
+    "passed": true,
+    "threads": 6,
+    "seconds": 0.0211,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814",
+    "stdout": "Gereed read=120 valid=120 invalid=0 records=4627"
+  },
+  {
+    "name": "depth-random-61",
+    "passed": true,
+    "threads": 6,
+    "seconds": 0.0271,
+    "sha256": "3780c1790c7cecb9807d37187d9b0addfeb76f531200c9676a44425bc4e4a876",
+    "stdout": "Gereed read=120 valid=120 invalid=0 records=4703"
+  },
+  {
+    "name": "invalid-FEN",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0041,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=4 valid=3 invalid=1 records=10"
+  },
+  {
+    "name": "invalid-FEN",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0056,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=4 valid=3 invalid=1 records=10"
+  },
+  {
+    "name": "invalid-FEN",
+    "passed": true,
+    "threads": 1,
+    "seconds": 0.0037,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=4 valid=3 invalid=1 records=10"
+  },
+  {
+    "name": "classic-basic",
+    "passed": true,
+    "threads": 18,
+    "seconds": 0.008,
+    "sha256": "3e6d2ad6dff4a38a2498351afbdf15e0d9c219802132042e45cf7e5b89ca9354",
+    "stdout": "Gereed read=3 valid=3 invalid=0 records=10"
+  },
+  {
+    "name": "classic-random",
+    "passed": true,
+    "threads": 18,
+    "seconds": 0.0184,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814",
+    "stdout": "Gereed read=120 valid=120 invalid=0 records=4627"
+  },
+  {
+    "name": "classic-halving",
+    "passed": true,
+    "threads": 18,
+    "seconds": 0.9488,
+    "sha256": "668316d1215250f9e8a860bafa1033096516c7732fc1f3a19e778cd2507d7fc6",
+    "stdout": "Gereed read=25000 valid=25000 invalid=0 records=1"
+  },
+  {
+    "name": "million-games-1",
+    "passed": true,
+    "threads": 1,
+    "seconds": 22.1245,
+    "sha256": "a197219bce65eb673574a3b87003836064cb05aae33bb0b80593f39209d9cf19",
+    "stdout": "Gereed read=1000000 valid=1000000 invalid=0 records=5"
+  },
+  {
+    "name": "million-games-6",
+    "passed": true,
+    "threads": 6,
+    "seconds": 44.0114,
+    "sha256": "a197219bce65eb673574a3b87003836064cb05aae33bb0b80593f39209d9cf19",
+    "stdout": "Gereed read=1000000 valid=1000000 invalid=0 records=5"
+  },
+  {
+    "name": "million-games-18",
+    "passed": true,
+    "threads": 18,
+    "seconds": 59.5647,
+    "sha256": "a197219bce65eb673574a3b87003836064cb05aae33bb0b80593f39209d9cf19",
+    "stdout": "Gereed read=1000000 valid=1000000 invalid=0 records=5"
+  }
+]

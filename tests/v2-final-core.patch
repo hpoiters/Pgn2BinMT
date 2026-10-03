@@ -1,0 +1,25 @@
+--- RC2.11/core.cpp
++++ 2.0/core.cpp
+@@ -1275,7 +1275,7 @@
+     auto report = work / "report.txt";
+     std::ofstream r(report);
+     auto timestamp = std::time(nullptr);
+-    r << "Pgn2BinMT RC2.11\nDate/time: "
++    r << "Pgn2BinMT 2.0\nDate/time: "
+       << std::put_time(std::localtime(&timestamp), "%Y-%m-%d %H:%M:%S") << "\n";
+     for (auto &i : cfg.inputs)
+       r << "Source: " << i.u8string() << "\n";
+@@ -1374,6 +1374,13 @@
+     for (auto &t : workers)
+       if (t.joinable())
+         t.join();
++    // Stop/failure can bypass the normal processing timer assignment.
++    // Freeze it after workers finish, before publishing the terminal phase.
++    // Preserve an existing reading duration when a later phase is interrupted.
++    if (!p.readMilliseconds)
++      p.readMilliseconds = std::max<int64_t>(
++          1, std::chrono::duration_cast<std::chrono::milliseconds>(
++                 Clock::now() - start).count());
+     std::error_code ec;
+     if (!work.empty()) {
+       auto dir = cfg.output.parent_path();

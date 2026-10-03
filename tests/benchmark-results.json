@@ -1,0 +1,26 @@
+[
+  {
+    "name": "benchmark-36000-long-games-1",
+    "passed": true,
+    "threads": 1,
+    "seconds": 4.5717,
+    "sha256": "26042338f917b1deeccb6224282350069302489b2daa4f40a36cdd4e71cfc14b",
+    "stdout": "Gereed read=36000 valid=36000 invalid=0 records=4627"
+  },
+  {
+    "name": "benchmark-36000-long-games-6",
+    "passed": true,
+    "threads": 6,
+    "seconds": 1.2333,
+    "sha256": "26042338f917b1deeccb6224282350069302489b2daa4f40a36cdd4e71cfc14b",
+    "stdout": "Gereed read=36000 valid=36000 invalid=0 records=4627"
+  },
+  {
+    "name": "benchmark-36000-long-games-18",
+    "passed": true,
+    "threads": 18,
+    "seconds": 2.2235,
+    "sha256": "26042338f917b1deeccb6224282350069302489b2daa4f40a36cdd4e71cfc14b",
+    "stdout": "Gereed read=36000 valid=36000 invalid=0 records=4627"
+  }
+]

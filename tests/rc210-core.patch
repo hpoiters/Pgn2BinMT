@@ -1,0 +1,105 @@
+--- RC2.9/core.cpp
++++ RC2.10/core.cpp
+@@ -100,16 +100,34 @@
+ class Lexer {
+   std::istream &f;
+   Progress &p;
++  // Read sequentially in blocks. Keep the logical position ourselves: tellg()
++  // on each token can query the underlying file even when its bytes are cached.
++  std::vector<char> input = std::vector<char>(256 * 1024);
++  size_t cursor = 0, available = 0;
++  std::streamoff position = 0;
++  int peek() {
++    if (cursor == available) {
++      f.read(input.data(), std::streamsize(input.size()));
++      available = size_t(f.gcount());
++      cursor = 0;
++      if (!available)
++        return EOF;
++    }
++    return static_cast<unsigned char>(input[cursor]);
++  }
+   bool first = true;
+   std::streampos anchor = -1;
+   uint64_t count = 0;
+   int get() {
+-    int c = f.get();
++    int c = peek();
+     if (c != EOF) {
++      ++cursor;
++      ++position;
+       ++count;
+       if (count == 65536) {
+         p.bytes += count;
+         count = 0;
++        check(p);
+       }
+     }
+     return c;
+@@ -124,6 +142,9 @@
+       f.seekg(anchor);
+     else
+       return false;
++    // Recovery retains the previous line-scanning rules. Discard read-ahead
++    // before seeking; resume buffered reads at the recovered stream position.
++    cursor = available = 0;
+     char buffer[65536];
+     while (f.getline(buffer, sizeof(buffer))) {
+       check(p);
+@@ -133,6 +154,8 @@
+       if (i != std::string::npos && line[i] == '[' &&
+           line.find(']', i) != std::string::npos) {
+         t = line.substr(i);
++        auto next = f.tellg();
++        position = next == std::streampos(-1) ? 0 : std::streamoff(next);
+         return true;
+       }
+     }
+@@ -143,7 +166,7 @@
+     int c;
+     if (first) {
+       first = false;
+-      if (f.peek() == 0xef) {
++      if (peek() == 0xef) {
+         get();
+         if (get() != 0xbb || get() != 0xbf)
+           throw std::runtime_error("Invalid BOM");
+@@ -159,7 +182,7 @@
+         continue;
+       }
+       if (c == '{') {
+-        anchor = f.tellg();
++        anchor = std::streampos(position);
+         while ((c = get()) != EOF && c != '}') {
+           if (c == '{')
+             throw std::runtime_error("Nested or unterminated comment");
+@@ -170,7 +193,7 @@
+         continue;
+       }
+       if (c == '[') {
+-        anchor = f.tellg();
++        anchor = std::streampos(position);
+         t = "[";
+         bool quoted = false, esc = false;
+         while ((c = get()) != EOF) {
+@@ -189,9 +212,9 @@
+         t = (char)c;
+         return true;
+       }
+-      anchor = f.tellg();
++      anchor = std::streampos(position);
+       t = (char)c;
+-      while ((c = f.peek()) != EOF && !std::isspace((unsigned char)c) &&
++      while ((c = peek()) != EOF && !std::isspace((unsigned char)c) &&
+              c != '{' && c != ';' && c != '[' && c != '(' && c != ')' &&
+              c != '$') {
+         t += (char)get();
+@@ -1252,7 +1275,7 @@
+     auto report = work / "report.txt";
+     std::ofstream r(report);
+     auto timestamp = std::time(nullptr);
+-    r << "Pgn2BinMT RC2.9\nDate/time: "
++    r << "Pgn2BinMT RC2.10\nDate/time: "
+       << std::put_time(std::localtime(&timestamp), "%Y-%m-%d %H:%M:%S") << "\n";
+     for (auto &i : cfg.inputs)
+       r << "Source: " << i.u8string() << "\n";

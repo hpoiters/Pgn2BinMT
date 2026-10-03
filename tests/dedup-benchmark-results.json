@@ -1,0 +1,32 @@
+[
+  {
+    "threads": 1,
+    "repeat": 1,
+    "total_seconds": 27.4218,
+    "dedup_seconds": 0.18,
+    "valid": 288000,
+    "duplicates": 287880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 6,
+    "repeat": 1,
+    "total_seconds": 13.8669,
+    "dedup_seconds": 0.049,
+    "valid": 288000,
+    "duplicates": 287880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 18,
+    "repeat": 1,
+    "total_seconds": 16.1755,
+    "dedup_seconds": 0.189,
+    "valid": 288000,
+    "duplicates": 287880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  }
+]

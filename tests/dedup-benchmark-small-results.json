@@ -1,0 +1,92 @@
+[
+  {
+    "threads": 1,
+    "repeat": 1,
+    "total_seconds": 3.5879,
+    "dedup_seconds": 0.026,
+    "valid": 36000,
+    "duplicates": 35880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 1,
+    "repeat": 2,
+    "total_seconds": 3.3727,
+    "dedup_seconds": 0.033,
+    "valid": 36000,
+    "duplicates": 35880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 1,
+    "repeat": 3,
+    "total_seconds": 3.1731,
+    "dedup_seconds": 0.038,
+    "valid": 36000,
+    "duplicates": 35880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 6,
+    "repeat": 1,
+    "total_seconds": 1.8961,
+    "dedup_seconds": 0.008,
+    "valid": 36000,
+    "duplicates": 35880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 6,
+    "repeat": 2,
+    "total_seconds": 1.7368,
+    "dedup_seconds": 0.008,
+    "valid": 36000,
+    "duplicates": 35880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 6,
+    "repeat": 3,
+    "total_seconds": 1.8188,
+    "dedup_seconds": 0.009,
+    "valid": 36000,
+    "duplicates": 35880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 18,
+    "repeat": 1,
+    "total_seconds": 2.0111,
+    "dedup_seconds": 0.065,
+    "valid": 36000,
+    "duplicates": 35880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 18,
+    "repeat": 2,
+    "total_seconds": 2.0023,
+    "dedup_seconds": 0.039,
+    "valid": 36000,
+    "duplicates": 35880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  },
+  {
+    "threads": 18,
+    "repeat": 3,
+    "total_seconds": 1.9724,
+    "dedup_seconds": 0.077,
+    "valid": 36000,
+    "duplicates": 35880,
+    "records": 4627,
+    "sha256": "21316f3d97f5423e6149bba29c1cad38f2a4492c5c1b855b4bdca474628d2814"
+  }
+]
